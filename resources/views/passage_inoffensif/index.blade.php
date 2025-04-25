@@ -92,12 +92,20 @@
                         <td>{{ $passage->date_sortie }}</td>
                         <td>{{ $passage->navire }}</td>
                         <td class="text-center">
-                            <form action="{{ route('passage_inoffensifs.destroy', $passage->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce passage ?');">
+                            <!-- Bouton Modifier -->
+                            <a href="{{ route('passage_inoffensifs.edit', $passage->id) }}"
+                               class="btn btn-warning btn-sm me-1">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                        
+                            <!-- Bouton Supprimer existant -->
+                            <form action="{{ route('passage_inoffensifs.destroy', $passage->id) }}"
+                                  method="POST" onsubmit="return confirm('Êtes-vous sûr ?');"
+                                  class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash-alt"></i>
-                                    Supprimer
                                 </button>
                             </form>
                         </td>

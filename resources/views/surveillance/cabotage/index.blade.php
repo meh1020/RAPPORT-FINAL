@@ -103,12 +103,19 @@
                         <td><small>{{ $cabotage->passagers }}</small></td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
-                                <form action="{{ route('cabotage.destroy', $cabotage->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');">
+                                <!-- Bouton Modifier -->
+                                <a href="{{ route('cabotage.edit', $cabotage->id) }}"
+                                   class="btn btn-warning btn-sm me-1">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                        
+                                <!-- Bouton Supprimer existant -->
+                                <form action="{{ route('cabotage.destroy', $cabotage->id) }}" method="POST"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i>
-                                        Supprimer
                                     </button>
                                 </form>
                             </div>

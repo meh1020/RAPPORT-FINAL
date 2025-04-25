@@ -91,24 +91,27 @@ class SitrepController extends Controller
         return view('surveillance.sitreps.edit', compact('sitrep'));
     }
 
+    // Valide et met à jour le SITREP
     public function update(Request $request, Sitrep $sitrep)
     {
         $request->validate([
-            'sitrep_sar' => 'required|string',
-            'mrcc_madagascar' => 'required|string',
-            'event' => 'required|string',
-            'position' => 'required|string',
-            'situation' => 'required|string',
-            'number_of_persons' => 'required|string',
-            'assistance_required' => 'required|string',
-            'coordinating_rcc' => 'required|string',
-            'initial_action_taken' => 'required|string',
-            'chronology' => 'required|string',
+            'date'                   => 'nullable|date',
+            'sitrep_sar'             => 'required|string',
+            'mrcc_madagascar'        => 'required|string',
+            'event'                  => 'required|string',
+            'position'               => 'required|string',
+            'situation'              => 'required|string',
+            'number_of_persons'      => 'required|string',
+            'assistance_required'    => 'required|string',
+            'coordinating_rcc'       => 'required|string',
+            'initial_action_taken'   => 'required|string',
+            'chronology'             => 'required|string',
             'additional_information' => 'nullable|string',
         ]);
 
         $sitrep->update($request->all());
-        return redirect()->route('sitreps.index')->with('success', 'SITREP mis à jour avec succès.');
+        return redirect()->route('sitreps.index')
+                        ->with('success', 'SITREP mis à jour avec succès.');
     }
 
     public function destroy(Sitrep $sitrep)

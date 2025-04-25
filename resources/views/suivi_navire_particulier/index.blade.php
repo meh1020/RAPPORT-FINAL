@@ -84,12 +84,20 @@
                         <td>{{ $suivi->observations }}</td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center">
-                                <form action="{{ route('suivi_navire_particuliers.destroy', $suivi->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce suivi ?');">
+                                <!-- Bouton Modifier -->
+                                <a href="{{ route('suivi_navire_particuliers.edit', $suivi->id) }}"
+                                   class="btn btn-warning btn-sm me-1">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                        
+                                <!-- Bouton Supprimer existant -->
+                                <form action="{{ route('suivi_navire_particuliers.destroy', $suivi->id) }}"
+                                      method="POST" onsubmit="return confirm('Confirmer la suppression ?');"
+                                      class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i>
-                                        Supprimer
                                     </button>
                                 </form>
                             </div>

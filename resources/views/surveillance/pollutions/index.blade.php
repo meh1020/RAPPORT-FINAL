@@ -95,8 +95,19 @@
                     </td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-2">
-                            <a href="{{ route('pollutions.exportPDF', $pollution->id) }}" class="btn btn-secondary btn-sm">Exporter PDF</a>
-                            <form action="{{ route('pollutions.destroy', $pollution->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette pollution ?');">
+                            <!-- Exporter PDF existant -->
+                            <a href="{{ route('pollutions.exportPDF', $pollution->id) }}"
+                               class="btn btn-secondary btn-sm">Exporter PDF</a>
+                    
+                            <!-- Nouveau bouton Modifier -->
+                            <a href="{{ route('pollutions.edit', $pollution->id) }}"
+                               class="btn btn-warning btn-sm me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                    
+                            <!-- Bouton Supprimer existant -->
+                            <form action="{{ route('pollutions.destroy', $pollution->id) }}" method="POST"
+                                  onsubmit="return confirm('Voulez-vous vraiment supprimer cette pollution ?');" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">

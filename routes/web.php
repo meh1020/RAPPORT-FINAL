@@ -102,18 +102,36 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/import-listmada', [ListeMadaController::class, 'import'])->name('listmadas.import');
 
     // AVURNAV
-    Route::get('/export-pdf_nav/{id}', [AvurnavController::class, 'exportPDF'])->name('export.pdf');
+    // routes/web.php
+
+    Route::get('/avurnav/export-pdf/{id}', 
+    [AvurnavController::class, 'exportPDF']
+    )->name('avurnav.exportPDF');
     Route::get('/avurnav', [AvurnavController::class, 'index'])->name('avurnav.index');
     Route::get('/avurnav/create', [AvurnavController::class, 'create'])->name('avurnav.create');
     Route::post('/avurnav/store', [AvurnavController::class, 'store']);
+    Route::get('avurnav/{avurnav}/edit', [AvurnavController::class, 'edit'])
+     ->name('avurnav.edit');
+    Route::put('avurnav/{avurnav}', [AvurnavController::class, 'update'])
+     ->name('avurnav.update');
+    Route::delete('/avurnav/{avurnav}', [AvurnavController::class, 'destroy'])
+    ->name('avurnav.destroy');
 
     // POLLUTION
     Route::resource('pollutions', PollutionController::class);
     Route::get('/export-pdf/{id}', [PollutionController::class, 'exportPDF'])->name('pollutions.exportPDF');
+    Route::get('pollutions/{pollution}/edit', [PollutionController::class, 'edit'])
+     ->name('pollutions.edit');
+    Route::put('pollutions/{pollution}', [PollutionController::class, 'update'])
+     ->name('pollutions.update');
 
     // SITREP
     Route::resource('sitreps', SitrepController::class);
     Route::get('/sitreps/{id}/export-pdf', [SitrepController::class, 'exportPDF'])->name('sitreps.exportPDF');
+    Route::get('sitreps/{sitrep}/edit', [SitrepController::class, 'edit'])
+     ->name('sitreps.edit');
+    Route::put('sitreps/{sitrep}', [SitrepController::class, 'update'])
+     ->name('sitreps.update');
 
     // ZONES
     Route::get('/zone/{id}', [ZoneController::class, 'show'])->name('zone.show');
@@ -136,6 +154,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('bilan_sars', BilanSarController::class)->except(['edit', 'update', 'show']);
     Route::get('general', [test::class, 'index']);
     Route::post('/bilan_sars/import', [BilanSarController::class, 'import'])->name('bilan_sars.import');
+    Route::get('bilan_sars/{bilanSar}/edit', [BilanSarController::class, 'edit'])
+     ->name('bilan_sars.edit');
+    Route::put('bilan_sars/{bilanSar}', [BilanSarController::class, 'update'])
+     ->name('bilan_sars.update');
+   
 
     // RAPPORTS
     Route::get('/rapports', [RapportController::class, 'index'])->name('rapport.index');
@@ -146,6 +169,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('cabotage', CabotageController::class);
     Route::post('/cabotage/store', [CabotageController::class, 'store'])->name('cabotage.store');
     Route::post('/cabotage/import', [CabotageController::class, 'import'])->name('cabotage.import');
+    Route::get('cabotage/{id}/edit', [CabotageController::class, 'edit'])
+     ->name('cabotage.edit');
+    Route::put('cabotage/{id}', [CabotageController::class, 'update'])
+     ->name('cabotage.update');
 
     // MER TERRITORIAL
     Route::resource('mer_territorial', MerTerritorial::class);
@@ -154,10 +181,18 @@ Route::group(['middleware' => 'auth'], function () {
     // VEDETTE SAR
     Route::resource('vedette_sar', VedetteSar::class);
     Route::post('/vedette_sar/store', [VedetteSar::class, 'store'])->name('vedette_sar.store');
+    Route::get('vedette_sar/{id}/edit', [VedetteSar::class, 'edit'])
+     ->name('vedette_sar.edit');
+    Route::put('vedette_sar/{id}', [VedetteSar::class, 'update'])
+     ->name('vedette_sar.update');
 
     // PASSAGE INNOFENSIF
     Route::resource('passage_inoffensifs', PassageInoffensifController::class)->only(['index', 'create', 'store', 'destroy']);
     Route::post('passage_inoffensifs/import', [PassageInoffensifController::class, 'import'])->name('passage_inoffensifs.import');
+    Route::get('passage_inoffensifs/{id}/edit', [PassageInoffensifController::class, 'edit'])
+     ->name('passage_inoffensifs.edit');
+    Route::put('passage_inoffensifs/{id}', [PassageInoffensifController::class, 'update'])
+     ->name('passage_inoffensifs.update');
 
     // SUIVI DES NAVIRES PARTICULIERS
     Route::resource('suivi_navire_particuliers', SuiviNavireParticulierController::class)->only(['index', 'create', 'store', 'destroy']);
@@ -167,6 +202,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/destinations/create', [DestinationController::class, 'create'])->name('destinations.create');
     Route::post('/destinations', [DestinationController::class, 'store'])->name('destinations.store');
     Route::delete('/destinations/{destination}', [DestinationController::class, 'destroy'])->name('destinations.destroy');
+    Route::get('suivi_navire_particuliers/{id}/edit', [SuiviNavireParticulierController::class, 'edit'])
+     ->name('suivi_navire_particuliers.edit');
+    Route::put('suivi_navire_particuliers/{id}', [SuiviNavireParticulierController::class, 'update'])
+     ->name('suivi_navire_particuliers.update');
 
     // PORTS
     Route::resource('ports', PortController::class)->except('show');

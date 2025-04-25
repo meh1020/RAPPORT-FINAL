@@ -27,11 +27,11 @@
         @csrf
         <div class="mb-3">
           <label for="date_entree" class="form-label">Date d'entrée</label>
-          <input type="date" name="date_entree" id="date_entree" class="form-control" required>
+          <input type="date" name="date_entree" id="date_entree" class="form-control" >
         </div>
         <div class="mb-3">
           <label for="date_sortie" class="form-label">Date de sortie</label>
-          <input type="date" name="date_sortie" id="date_sortie" class="form-control" required>
+          <input type="date" name="date_sortie" id="date_sortie" class="form-control" >
         </div>
         <div class="mb-3">
           <label for="navire" class="form-label">Navire</label>

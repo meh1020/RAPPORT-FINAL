@@ -56,8 +56,8 @@ class PassageInoffensifController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'date_entree' => 'required|date',
-            'date_sortie' => 'required|date|after_or_equal:date_entree',
+            'date_entree' => 'nullable|date',
+            'date_sortie' => 'nullable|date|after_or_equal:date_entree',
             'navire'      => 'required|string|max:255',
         ]);
 
@@ -65,6 +65,29 @@ class PassageInoffensifController extends Controller
 
         return redirect()->route('passage_inoffensifs.index')
                          ->with('success', 'Passage inoffensif créé avec succès.');
+    }
+
+    // Affiche le formulaire d'édition
+    public function edit($id)
+    {
+        $passage = PassageInoffensif::findOrFail($id);
+        return view('passage_inoffensif.edit', compact('passage'));
+    }
+
+    // Met à jour le passage inoffensif
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'date_entree' => 'nullable|date',
+            'date_sortie' => 'nullable|date|after_or_equal:date_entree',
+            'navire'      => 'required|string|max:255',
+        ]);
+
+        $passage = PassageInoffensif::findOrFail($id);
+        $passage->update($request->only(['date_entree', 'date_sortie', 'navire']));
+
+        return redirect()->route('passage_inoffensifs.index')
+                        ->with('success', 'Passage inoffensif mis à jour avec succès.');
     }
 
     // Supprime un passage inoffensif
@@ -78,70 +101,74 @@ class PassageInoffensifController extends Controller
     }
     
     public function import(Request $request)
-    {
-        $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt',
-        ]);
+{
+    $request->validate([
+        'csv_file' => 'required|file|mimes:csv,txt',
+    ]);
 
-        $file = $request->file('csv_file');
-        $handle = fopen($file->getPathname(), "r");
+    $file   = $request->file('csv_file');
+    $handle = fopen($file->getPathname(), "r");
 
-        if ($handle !== false) {
-            $rowNumber = 0;
+    if ($handle !== false) {
+        $rowNumber = 0;
+        $headers   = fgetcsv($handle, 1000, ";");
 
-            // Lecture et validation de la première ligne (en-têtes) avec le bon délimiteur
-            $headers = fgetcsv($handle, 1000, ";");
-            if (!$headers || count($headers) < 3) {
-                fclose($handle);
-                return redirect()->back()->withErrors(['csv_file' => 'Le fichier CSV ne contient pas de colonnes valides.']);
-            }
-
-            // Boucle sur les lignes suivantes
-            while (($row = fgetcsv($handle, 1000, ";")) !== false) {
-                $rowNumber++;
-
-                // Vérification du nombre de colonnes attendu
-                if (count($row) < 3) {
-                    \Log::error("Ligne $rowNumber ignorée : Données incomplètes.");
-                    continue;
-                }
-
-                // Mapping des colonnes
-                $navire     = trim($row[0]);
-                $dateEntree = trim($row[1]);
-                $dateSortie = trim($row[2]);
-
-                // Conversion des dates au format d/m/Y en objet DateTime
-                $dateEntreeObj = \DateTime::createFromFormat('d/m/Y', $dateEntree);
-                $dateSortieObj = \DateTime::createFromFormat('d/m/Y', $dateSortie);
-
-                if (!$dateEntreeObj || !$dateSortieObj) {
-                    \Log::error("Ligne $rowNumber ignorée : Format de date incorrect (date_entree : $dateEntree, date_sortie : $dateSortie).");
-                    continue;
-                }
-
-                // Formatage des dates au format YYYY-MM-DD
-                $dateEntree = $dateEntreeObj->format('Y-m-d');
-                $dateSortie = $dateSortieObj->format('Y-m-d');
-
-                // Conversion de l'encodage pour le nom du navire
-                $encoding = mb_detect_encoding($navire, 'UTF-8, ISO-8859-1, WINDOWS-1252', true);
-                if ($encoding !== 'UTF-8') {
-                    $navire = mb_convert_encoding($navire, 'UTF-8', $encoding);
-                }
-                $navire = preg_replace('/^\xEF\xBB\xBF/', '', $navire);
-
-                \Log::info("Insertion de la ligne $rowNumber : $dateEntree | $dateSortie | $navire");
-
-                PassageInoffensif::create([
-                    'date_entree' => $dateEntree,
-                    'date_sortie' => $dateSortie,
-                    'navire'      => $navire,
-                ]);
-            }
+        if (!$headers || count($headers) < 3) {
             fclose($handle);
+            return redirect()->back()
+                             ->withErrors(['csv_file' => 'Le fichier CSV ne contient pas de colonnes valides.']);
         }
 
-        return redirect()->back()->with('success', 'Données importées avec succès !');
+        while (($row = fgetcsv($handle, 1000, ";")) !== false) {
+            $rowNumber++;
+            if (count($row) < 3) {
+                Log::error("Ligne $rowNumber ignorée : Données incomplètes.");
+                continue;
+            }
+
+            $navire     = trim($row[0]);
+            $rawEntree  = trim($row[1]);
+            $rawSortie  = trim($row[2]);
+
+            // Si champ vide, on garde null
+            $dateEntreeObj = $rawEntree !== ''
+                ? \DateTime::createFromFormat('d/m/Y', $rawEntree)
+                : null;
+            $dateSortieObj = $rawSortie !== ''
+                ? \DateTime::createFromFormat('d/m/Y', $rawSortie)
+                : null;
+
+            // Si le format est incorrect pour une date renseignée => on ignore la ligne
+            if (($rawEntree !== '' && !$dateEntreeObj) || ($rawSortie !== '' && !$dateSortieObj)) {
+                Log::error("Ligne $rowNumber ignorée : Format de date incorrect (entrée: $rawEntree, sortie: $rawSortie).");
+                continue;
+            }
+
+            // Conversion en YYYY‑MM‑DD ou null
+            $dateEntree = $dateEntreeObj ? $dateEntreeObj->format('Y-m-d') : null;
+            $dateSortie = $dateSortieObj ? $dateSortieObj->format('Y-m-d') : null;
+
+            // Encodage du navire
+            $encoding = mb_detect_encoding($navire, 'UTF-8, ISO-8859-1, WINDOWS-1252', true);
+            if ($encoding !== 'UTF-8') {
+                $navire = mb_convert_encoding($navire, 'UTF-8', $encoding);
+            }
+            $navire = preg_replace('/^\xEF\xBB\xBF/', '', $navire);
+
+            Log::info("Insertion ligne $rowNumber : entrée={$dateEntree}, sortie={$dateSortie}, navire={$navire}");
+
+            PassageInoffensif::create([
+                'navire'      => $navire,
+                'date_entree' => $dateEntree,
+                'date_sortie' => $dateSortie,
+            ]);
+        }
+
+        fclose($handle);
     }
+
+    return redirect()->back()
+                     ->with('success', 'Importation terminée avec succès !');
+}
+
 }

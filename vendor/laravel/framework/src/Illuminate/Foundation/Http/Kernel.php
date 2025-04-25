@@ -70,7 +70,7 @@ class Kernel implements KernelContract
      *
      * @deprecated
      */
-    protected $routeMiddleware = [];
+    protected $routeMiddleware = [ 'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,];
 
     /**
      * The application's middleware aliases.

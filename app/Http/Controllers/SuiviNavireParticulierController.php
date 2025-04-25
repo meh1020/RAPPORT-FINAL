@@ -70,6 +70,29 @@ class SuiviNavireParticulierController extends Controller
                          ->with('success', 'Suivi créé avec succès.');
     }
 
+    public function edit($id)
+{
+    $suivi = SuiviNavireParticulier::findOrFail($id);
+    return view('suivi_navire_particulier.edit', compact('suivi'));
+}
+
+    // Traite la mise à jour du suivi
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'date'         => 'required|date',
+            'nom_navire'   => 'required|string|max:255',
+            'mmsi'         => 'required|string|max:255',
+            'observations' => 'nullable|string',
+        ]);
+
+        $suivi = SuiviNavireParticulier::findOrFail($id);
+        $suivi->update($request->only(['date', 'nom_navire', 'mmsi', 'observations']));
+
+        return redirect()->route('suivi_navire_particuliers.index')
+                        ->with('success', 'Suivi mis à jour avec succès.');
+    }
+
     // Supprime un suivi
     public function destroy($id)
     {

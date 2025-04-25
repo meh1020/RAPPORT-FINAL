@@ -85,28 +85,29 @@ class PollutionController extends Controller
     
     public function edit(Pollution $pollution)
     {
-        return view('pollutions.edit', compact('pollution'));
+        return view('surveillance.pollutions.edit', compact('pollution'));
     }
-    
+
     public function update(Request $request, Pollution $pollution)
     {
         $request->validate([
-            'date' => 'required|date',
-            'numero' => 'required|string',
-            'zone' => 'required|string',
-            'coordonnees' => 'required|string',
+            'date'           => 'required|date',
+            'numero'         => 'required|string',
+            'zone'           => 'required|string',
+            'coordonnees'    => 'required|string',
             'type_pollution' => 'required|string',
-            'image_satellite' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image_satellite'=> 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['date','numero','zone','coordonnees','type_pollution']);
         if ($request->hasFile('image_satellite')) {
-            $data['image_satellite'] = $request->file('image_satellite')->store('images', 'public');
+            $data['image_satellite'] = $request->file('image_satellite')
+                                        ->store('images', 'public');
         }
 
         $pollution->update($data);
-
-        return redirect()->route('pollutions.index')->with('success', 'Donnée mise à jour.');
+        return redirect()->route('pollutions.index')
+                        ->with('success', 'Donnée mise à jour.');
     }
     
     public function destroy(Pollution $pollution)

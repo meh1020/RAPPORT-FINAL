@@ -74,6 +74,32 @@ class VedetteSar extends Controller
         return redirect()->route('vedette_sar.index')->with('success', 'Vedette Sar créé avec succès !');
     }
 
+    public function edit($id)
+    {
+        $vedette = Vedette::findOrFail($id);
+        return view('surveillance.vedette_sar.edit', compact('vedette'));
+    }
+
+    // Traite la mise à jour
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'date'                => 'required|date',
+            'unite_sar'           => 'required|string|max:255',
+            'total_interventions' => 'nullable|integer|max:255',
+            'total_pob'           => 'nullable|integer',
+            'total_survivants'    => 'nullable|integer',
+            'total_morts'         => 'nullable|integer',
+            'total_disparus'      => 'nullable|integer',
+        ]);
+
+        $vedette = Vedette::findOrFail($id);
+        $vedette->update($validated);
+
+        return redirect()->route('vedette_sar.index')
+                        ->with('success', 'Vedette SAR mise à jour avec succès !');
+    }
+
     /**
      * Supprime un cabotage de la base de données.
      */

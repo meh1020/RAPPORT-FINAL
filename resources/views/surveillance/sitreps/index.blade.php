@@ -94,8 +94,18 @@
                         <td><small>{{ $sitrep->additional_information }}</small></td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
+                                <!-- Export PDF -->
                                 <a href="{{ route('sitreps.exportPDF', $sitrep->id) }}" class="btn btn-secondary btn-sm">Exporter</a>
-                                <form action="{{ route('sitreps.destroy', $sitrep->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer ce SITREP ?');">
+                        
+                                <!-- Bouton Modifier -->
+                                <a href="{{ route('sitreps.edit', $sitrep->id) }}"
+                                   class="btn btn-warning btn-sm me-1">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                        
+                                <!-- Bouton Supprimer -->
+                                <form action="{{ route('sitreps.destroy', $sitrep->id) }}" method="POST"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer ce SITREP ?');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">

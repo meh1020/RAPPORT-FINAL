@@ -59,6 +59,35 @@ class AvurnavController extends Controller
         return view('surveillance.avurnav.create');
     }
 
+    public function edit(Avurnav $avurnav)
+    {
+        return view('surveillance.avurnav.edit', compact('avurnav'));
+    }
+
+    // Valide et met à jour le modèle
+    public function update(Request $request, Avurnav $avurnav)
+    {
+        $request->validate([
+            'date'                => 'required|date',
+            'avurnav_local'       => 'required|string',
+            'ile'                 => 'required|string',
+            'vous_signale'        => 'required|string',
+            'position'            => 'required|string',
+            'navire'              => 'required|string',
+            'pob'                 => 'required|integer',
+            'type'                => 'required|string',
+            'caracteristiques'    => 'required|string',
+            'zone'                => 'required|string',
+            'derniere_communication' => 'nullable|date',
+            'contacts'            => 'required|string',
+        ]);
+
+        $avurnav->update($request->all());
+
+        return redirect()->route('avurnav.index')
+                        ->with('success', 'AVURNAV mis à jour avec succès.');
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -79,6 +108,17 @@ class AvurnavController extends Controller
         Avurnav::create($validatedData);
 
         return redirect()->route('avurnav.index')->with('success', 'Données enregistrées avec succès.');
+    }
+
+    public function destroy(Avurnav $avurnav)
+    {
+        // Supprime l’enregistrement
+        $avurnav->delete();
+
+        // Redirige vers la liste avec un message de succès
+        return redirect()
+            ->route('avurnav.index')
+            ->with('success', 'Le rapport AVURNAV a été supprimé avec succès.');
     }
 
     public function exportPDF($id)

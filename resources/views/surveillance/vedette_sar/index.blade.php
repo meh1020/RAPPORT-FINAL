@@ -98,12 +98,19 @@
                         <td><small>{{ $vedette->total_disparus }}</small></td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                <form action="{{ route('vedette_sar.destroy', $vedette->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');">
+                                <!-- Bouton Modifier -->
+                                <a href="{{ route('vedette_sar.edit', $vedette->id) }}"
+                                   class="btn btn-warning btn-sm me-1">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                        
+                                <!-- Bouton Supprimer existant -->
+                                <form action="{{ route('vedette_sar.destroy', $vedette->id) }}" method="POST"
+                                      onsubmit="return confirm('Confirmer la suppression ?');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt"></i>
-                                        Supprimer
                                     </button>
                                 </form>
                             </div>

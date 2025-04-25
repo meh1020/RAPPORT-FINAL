@@ -100,8 +100,18 @@
                         <td><small>{{ $avurnav->contacts }}</small></td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('export.pdf', $avurnav->id) }}" class="btn btn-secondary btn-sm">Exporter</a>
-                                <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');">
+                                <!-- Export PDF existant -->
+                                <a href="{{ route('avurnav.exportPDF', $avurnav->id) }}" class="btn btn-secondary btn-sm">Exporter</a>
+                        
+                                <!-- Nouveau bouton Modifier -->
+                                <a href="{{ route('avurnav.edit', $avurnav->id) }}"
+                                   class="btn btn-warning btn-sm me-1">
+                                    <i class="fas fa-edit"></i> 
+                                </a>
+                        
+                                <!-- Bouton Supprimer existant -->
+                                <form action="{{ route('avurnav.destroy', $avurnav->id) }}" method="POST"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">

@@ -166,8 +166,15 @@
                         <td><small>{{ $bilan->evasan }}</small></td>
                         <td><small>{{ $bilan->bilan_materiel }}</small></td>
                         <td class="text-center">
-                            <div class="d-flex justify-content-center">
-                                <form action="{{ route('bilan_sars.destroy', $bilan->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');">
+                            <div class="d-flex justify-content-center gap-2">
+                                <!-- Bouton Modifier -->
+                                <a href="{{ route('bilan_sars.edit', $bilan->id) }}"
+                                   class="btn btn-warning btn-sm me-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <!-- Bouton Supprimer existant -->
+                                <form action="{{ route('bilan_sars.destroy', $bilan->id) }}" method="POST"
+                                      onsubmit="return confirm('Voulez-vous vraiment supprimer cet élément ?');" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">

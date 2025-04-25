@@ -75,6 +75,30 @@ class CabotageController extends Controller
          return redirect()->route('cabotage.index')->with('success', 'Enregistrement effectué avec succès !');
      }
 
+     public function edit($id)
+    {
+        $cabotage = Cabotage::findOrFail($id);
+        return view('surveillance.cabotage.edit', compact('cabotage'));
+    }
+
+    // Traite la mise à jour du cabotage
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'date'       => 'required|date',
+            'provenance' => 'required|string|max:255',
+            'navires'    => 'required|string|max:255',
+            'equipage'   => 'required|integer',
+            'passagers'  => 'required|integer',
+        ]);
+
+        $cabotage = Cabotage::findOrFail($id);
+        $cabotage->update($validated);
+
+        return redirect()->route('cabotage.index')
+                        ->with('success', 'Cabotage mis à jour avec succès !');
+    }
+
      // Supprime un enregistrement spécifique
     public function destroy($id)
     {
